@@ -2,8 +2,7 @@ const express = require('express')
 const logger = require('morgan')
 const errorhandler = require('errorhandler')
 const bodyParser = require('body-parser')
-const posts = require('./routes/posts')
-const comments = require('./routes/comments')
+const routes = require('./routes')
 let app = express()
 
 let store = {
@@ -13,37 +12,19 @@ let store = {
 app.use(bodyParser.json())
 app.use(logger('dev'))
 app.use(errorhandler())
-
-app.get('/posts', (req, res) => {
-    posts.getPosts(req, res, store);
+app.use((req, res, next) => {
+    req.store = store
+    next()
 })
 
-app.post('/posts', (req, res) => {
-    posts.addPost(req, res, store);
-})
+app.get('/posts', routes.posts.getPosts)
+app.post('/posts',routes.posts.addPost)
+app.put('/posts/:postId', routes.posts.updatePost)
+app.delete('/posts/:postId', routes.posts.removePost)
 
-app.put('/posts/:postId', (req, res) => {
-    posts.updatePost(req, res, store);
-})
-
-app.delete('/posts/:postId', (req, res) => {
-    posts.removePost(req, res, store);
-})
-
-app.get('/posts/:postId/comments', (req, res) => {
-    comments.getComments(req, res, store);
-})
-
-app.post('/posts/:postId/comments', (req, res) => {
-    comments.addComment(req, res, store);
-})
-
-app.put('/posts/:postId/comments/:commentId', (req, res) => {
-    comments.updateComment(req, res, store);
-})
-
-app.delete('/posts/:postId/comments/:commentId', (req, res) => {
-    comments.removeComment(req, res, store);
-})
+app.get('/posts/:postId/comments', routes.comments.getComments)
+app.post('/posts/:postId/comments', routes.comments.addComment)
+app.put('/posts/:postId/comments/:commentId', routes.comments.updateComment)
+app.delete('/posts/:postId/comments/:commentId',  routes.comments.removeComment)
   
 app.listen(3000)

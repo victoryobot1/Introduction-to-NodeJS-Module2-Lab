@@ -1,21 +1,21 @@
 module.exports = {
-    getPosts(req, res, store) {
-        res.status(200).send(store.posts)
+    getPosts(req, res) {
+        res.status(200).send(req.store.posts)
     },
-    addPost(req, res, store) {
+    addPost(req, res) {
         let newPost = req.body
-        let id = store.posts.length
-        store.posts.push(newPost)
+        let id = req.store.posts.length
+        req.store.posts.push(newPost)
         res.status(201).send({id: id})
     },
-    updatePost(req, res, store) {
-        var comments = store.posts[req.params.postId].comments
-        store.posts[req.params.postId] = req.body
-        store.posts[req.params.postId].comments = comments
-        res.status(200).send(store.posts[req.params.postId])
+    updatePost(req, res) {
+        var comments = req.store.posts[req.params.postId].comments
+        req.store.posts[req.params.postId] = req.body
+        req.store.posts[req.params.postId].comments = comments
+        res.status(200).send(req.store.posts[req.params.postId])
     },
-    removePost(req, res, store) {
-        store.posts.splice(req.params.postId, 1)
+    removePost(req, res) {
+        req.store.posts.splice(req.params.postId, 1)
         res.status(204).send()
     }
   }
